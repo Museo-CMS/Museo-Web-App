@@ -1,92 +1,161 @@
+// import React, { useReducer } from 'react';
+// import './App.css';
+// import { Button } from '@material-ui/core';
+
+// const initialState = {
+//   firstCounter: 0,
+//   secondCounter: 10,
+// };
+// const myState = (state, action) => {
+//   switch (action.type) {
+//     case 'increment':
+//       return { ...state, firstCounter: state.firstCounter + action.value };
+//     case 'decrement':
+//       return { ...state, firstCounter: state.firstCounter - action.value };
+//     case 'increment2':
+//       return { ...state, secondCounter: state.secondCounter + action.value };
+//     case 'decrement2':
+//       return { ...state, secondCounter: state.secondCounter - action.value };
+//     case 'reset':
+//       return initialState;
+
+//     default:
+//       return state;
+//   }
+// };
+
+// const App = () => {
+//   const [count, dispatch] = useReducer(myState, initialState);
+//   return (
+//     <div>
+//       <div>First counter - {count.firstCounter}</div>
+//       <div>Second counter - {count.secondCounter}</div>
+//       <Button
+//         variant="contained"
+//         color="primary"
+//         onClick={() => dispatch({ type: 'increment', value: 1 })}
+//       >
+//         Increment
+//       </Button>
+//       <Button
+//         variant="contained"
+//         color="primary"
+//         onClick={() => dispatch({ type: 'decrement', value: 1 })}
+//       >
+//         Decrement
+//       </Button>
+//       <Button
+//         variant="contained"
+//         color="primary"
+//         onClick={() => dispatch({ type: 'reset' })}
+//       >
+//         Reset
+//       </Button>
+
+//       <div>
+//         <Button
+//           variant="contained"
+//           color="secondary"
+//           onClick={() => dispatch({ type: 'increment2', value: 1 })}
+//         >
+//           Increment2
+//         </Button>
+//         <Button
+//           variant="contained"
+//           color="secondary"
+//           onClick={() => dispatch({ type: 'decrement2', value: 1 })}
+//         >
+//           Decrement2
+//         </Button>
+//       </div>
+//     </div>
+//   );
+// };
+// export default App;
+
 import React from 'react';
-import clsx from 'clsx';
-import { makeStyles } from '@material-ui/core/styles';
-import Drawer from '@material-ui/core/Drawer';
-import Button from '@material-ui/core/Button';
-import List from '@material-ui/core/List';
-import Divider from '@material-ui/core/Divider';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import InboxIcon from '@material-ui/icons/MoveToInbox';
-import MailIcon from '@material-ui/icons/Mail';
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link,
+  useRouteMatch,
+  useParams,
+} from 'react-router-dom';
 
-const useStyles = makeStyles({
-  list: {
-    width: 250,
-  },
-  fullList: {
-    width: 'auto',
-  },
-});
+export default function App() {
+  return (
+    <Router>
+      <div>
+        <ul>
+          <li>
+            <Link to="/">Home</Link>
+          </li>
+          <li>
+            <Link to="/about">About</Link>
+          </li>
+          <li>
+            <Link to="/topics">Topics</Link>
+          </li>
+        </ul>
 
-export default function TemporaryDrawer() {
-  const classes = useStyles();
-  const [state, setState] = React.useState({
-    top: false,
-    left: false,
-    bottom: false,
-    right: false,
-  });
-
-  const toggleDrawer = (anchor, open) => (event) => {
-    if (
-      event.type === 'keydown' &&
-      (event.key === 'Tab' || event.key === 'Shift')
-    ) {
-      return;
-    }
-
-    setState({ ...state, [anchor]: open });
-  };
-
-  const list = (anchor) => (
-    <div
-      className={clsx(classes.list, {
-        [classes.fullList]: anchor === 'top' || anchor === 'bottom',
-      })}
-      role="presentation"
-      onClick={toggleDrawer(anchor, false)}
-      onKeyDown={toggleDrawer(anchor, false)}
-    >
-      <List>
-        {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-          <ListItem button key={text}>
-            <ListItemIcon>
-              {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-            </ListItemIcon>
-            <ListItemText primary={text} />
-          </ListItem>
-        ))}
-      </List>
-      <Divider />
-      <List>
-        {['All mail', 'Trash', 'Spam'].map((text, index) => (
-          <ListItem button key={text}>
-            <ListItemIcon>
-              {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-            </ListItemIcon>
-            <ListItemText primary={text} />
-          </ListItem>
-        ))}
-      </List>
-    </div>
+        <Switch>
+          <Route path="/about">
+            <About />
+          </Route>
+          <Route path="/topics">
+            <Topics />
+          </Route>
+          <Route path="/">
+            <Home />
+          </Route>
+        </Switch>
+      </div>
+    </Router>
   );
+}
+
+function Home() {
+  return <h2>Home</h2>;
+}
+
+function About() {
+  return <h2>About</h2>;
+}
+
+function Topics() {
+  let match = useRouteMatch();
 
   return (
     <div>
-      {['left', 'right', 'top', 'bottom'].map((anchor) => (
-        <React.Fragment key={anchor}>
-          <Button onClick={toggleDrawer(anchor, true)}>{anchor}</Button>
-          <Drawer
-            anchor={anchor}
-            open={state[anchor]}
-            onClose={toggleDrawer(anchor, false)}
-          >
-            {list(anchor)}
-          </Drawer>
-        </React.Fragment>
-      ))}
+      <h2>Topics</h2>
+
+      <ul>
+        <li>
+          <Link to={`${match.url}/components`}>Components</Link>
+        </li>
+        <li>
+          <Link to={`${match.url}/props-v-state`}>Props v. State</Link>
+        </li>
+      </ul>
+
+      {/* The Topics page has its own <Switch> with more routes
+          that build on the /topics URL path. You can think of the
+          2nd <Route> here as an "index" page for all topics, or
+          the page that is shown when no topic is selected */}
+      <Switch>
+        <Route path={`${match.path}/:topicId`}>
+          <Topic />
+        </Route>
+        <Route path={match.path}>
+          <h3>Please select a topic.</h3>
+        </Route>
+      </Switch>
     </div>
   );
+}
+
+function Topic() {
+  let { topicId } = useParams();
+  return <h3>Requested topic ID: {topicId}</h3>;
 }
